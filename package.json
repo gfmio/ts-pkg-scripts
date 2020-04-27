@@ -1,0 +1,17 @@
+{
+  "name": "ts-pkg-scripts",
+  "version": "0.0.0",
+  "description": "Build scripts for TypeScript packages",
+  "bin": {
+    "ts-pkg": "cli.js",
+    "ts-pkg-scripts": "cli.js"
+  },
+  "main": "index.js",
+  "repository": "https://github.com/gfmio/ts-pkg-scripts",
+  "author": {
+    "name": "Frédérique Mittelstaedt",
+    "email": "npm@gfm.io",
+    "url": "https://www.gfm.io"
+  },
+  "license": "MIT"
+}
