@@ -1,0 +1,2 @@
+# Disable errors for comments in JSON
+*.json  linguist-language=JSON-with-Comments

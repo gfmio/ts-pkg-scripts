@@ -1,17 +1,72 @@
 {
   "name": "ts-pkg-scripts",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Build scripts for TypeScript packages",
-  "bin": {
-    "ts-pkg": "cli.js",
-    "ts-pkg-scripts": "cli.js"
-  },
-  "main": "index.js",
+  "license": "MIT",
   "repository": "https://github.com/gfmio/ts-pkg-scripts",
+  "private": true,
   "author": {
     "name": "Frédérique Mittelstaedt",
     "email": "npm@gfm.io",
     "url": "https://www.gfm.io"
   },
-  "license": "MIT"
+  "bin": {
+    "ts-pkg": "dist/bin/ts-pkg-scripts.js",
+    "ts-pkg-scripts": "dist/bin/ts-pkg-scripts.js"
+  },
+  "main": "dist/ts-pkg-scripts.js",
+  "module": "dist/ts-pkg-scripts.mjs",
+  "types": "dist/ts-pkg-scripts.d.ts",
+  "scripts": {
+    "build": "run-p build:bundle:lib build:bundle:cli build:compile:cjs build:compile:es build:compile:dts build:readme build:license build:package.json",
+    "build:bundle:lib": "yarn ts-pkg bundle --cjs --es --dts --min",
+    "build:bundle:cli": "yarn ts-pkg bundle -e src/bin/ts-pkg-scripts.ts --cjs dist/bin/ts-pkg-scripts.js",
+    "build:compile:cjs": "yarn ts-pkg compile --cjs -o dist/lib",
+    "build:compile:es": "yarn ts-pkg compile --es -e .mjs -o dist/lib",
+    "build:compile:dts": "yarn ts-pkg compile --dts -o dist/lib",
+    "build:readme": "mkdir -p dist && cp README.md dist",
+    "build:license": "mkdir -p dist && cp LICENSE dist",
+    "build:package.json": "yarn ts-pkg package-json --public",
+    "clean:dist": "rimraf dist",
+    "ts-pkg": "ts-node src/bin/ts-pkg-scripts.ts",
+    "prebuild": "yarn clean:dist",
+    "publish": "cd dist && yarn publish"
+  },
+  "dependencies": {
+    "@schemastore/package": "^0.0.5",
+    "@schemastore/tsconfig": "^0.0.8",
+    "@types/gulp": "^4.0.6",
+    "@types/gulp-if": "^0.0.33",
+    "@types/gulp-rename": "^0.0.33",
+    "@types/gulp-sourcemaps": "^0.0.32",
+    "@types/node": "^13.13.1",
+    "@types/prettier": "^2.0.0",
+    "@types/vinyl": "^2.0.4",
+    "commander": "^5.0.0",
+    "dts-bundle-generator": "^4.3.0",
+    "gulp": "^4.0.2",
+    "gulp-if": "^3.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "jsonc-parser": "^2.2.1",
+    "rollup": "^2.6.1",
+    "rollup-plugin-preserve-shebangs": "^0.2.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "rollup-plugin-typescript2": "^0.27.0",
+    "ts-error": "^1.0.4",
+    "tslib": "^1.11.1"
+  },
+  "peerDependencies": {
+    "typescript": "*"
+  },
+  "devDependencies": {
+    "@types/gulp-debug": "^2.0.31",
+    "gulp-debug": "^4.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.9.0",
+    "typescript": "^3.8.3"
+  }
 }
