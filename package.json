@@ -1,6 +1,6 @@
 {
   "name": "ts-pkg-scripts",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Build scripts for TypeScript packages",
   "license": "MIT",
   "repository": "https://github.com/gfmio/ts-pkg-scripts",
@@ -30,7 +30,7 @@
     "clean:dist": "rimraf dist",
     "ts-pkg": "ts-node src/bin/ts-pkg-scripts.ts",
     "prebuild": "yarn clean:dist",
-    "publish": "cd dist && yarn publish && yarn ts-pkg update-package-json -s dist/package.json -d package.json -f version"
+    "publish": "yarn publish --no-git-tag-version dist && yarn ts-pkg update-package-json -s dist/package.json -d package.json -f version"
   },
   "dependencies": {
     "@schemastore/package": "^0.0.5",
