@@ -18,19 +18,19 @@
   "module": "dist/ts-pkg-scripts.mjs",
   "types": "dist/ts-pkg-scripts.d.ts",
   "scripts": {
-    "build": "run-p build:bundle:lib build:bundle:cli build:compile:cjs build:compile:es build:compile:dts build:readme build:license build:package.json",
+    "build": "run-p build:bundle:lib build:bundle:cli build:compile:cjs build:compile:es build:compile:dts build:readme build:license build:package-json",
     "build:bundle:lib": "yarn ts-pkg bundle --cjs --es --dts --min",
     "build:bundle:cli": "yarn ts-pkg bundle -e src/bin/ts-pkg-scripts.ts --cjs dist/bin/ts-pkg-scripts.js --min",
     "build:compile:cjs": "yarn ts-pkg compile --cjs -o dist/lib",
     "build:compile:es": "yarn ts-pkg compile --es -e .mjs -o dist/lib",
     "build:compile:dts": "yarn ts-pkg compile --dts -o dist/lib",
+    "build:package-json": "yarn ts-pkg create-package-json --public",
     "build:readme": "mkdir -p dist && cp README.md dist",
     "build:license": "mkdir -p dist && cp LICENSE dist",
-    "build:package.json": "yarn ts-pkg package-json --public",
     "clean:dist": "rimraf dist",
     "ts-pkg": "ts-node src/bin/ts-pkg-scripts.ts",
     "prebuild": "yarn clean:dist",
-    "publish": "cd dist && yarn publish"
+    "publish": "cd dist && yarn publish && yarn ts-pkg update-package-json -s dist/package.json -d package.json -f version"
   },
   "dependencies": {
     "@schemastore/package": "^0.0.5",

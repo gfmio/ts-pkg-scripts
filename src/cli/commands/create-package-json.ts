@@ -1,11 +1,11 @@
 import commander from "commander";
 import * as path from "path";
-import { updatePackageJson } from "../../actions";
+import { createPackageJson } from "../../actions";
 import { writeFileAsync } from "../../utils/fs";
 import readPackageJson from "../../utils/readPackageJson";
 import readTsConfigJson from "../../utils/readTsconfigJson";
 
-export interface PackageJsonCommandOptions {
+export interface CreatePackageJsonCommandOptions {
   input?: string;
   outDir?: string;
   outFile?: string;
@@ -14,7 +14,7 @@ export interface PackageJsonCommandOptions {
   removePrivate?: boolean;
 }
 
-export const action = async (opts: PackageJsonCommandOptions) => {
+export const action = async (opts: CreatePackageJsonCommandOptions) => {
   const packageJson = await readPackageJson(opts.input);
 
   const tsconfigJson = await readTsConfigJson(
@@ -44,7 +44,7 @@ export const action = async (opts: PackageJsonCommandOptions) => {
     );
   }
 
-  const newPackageJson = updatePackageJson(
+  const newPackageJson = createPackageJson(
     packageJson.data,
     relativeOutDir,
     opts.private
@@ -60,8 +60,8 @@ export const action = async (opts: PackageJsonCommandOptions) => {
 };
 
 export const command = commander
-  .createCommand("package-json")
-  .description("Move the package.json and update relative paths")
+  .createCommand("create-package-json")
+  .description("Creates a copy of a package.json and updates relative paths")
   .storeOptionsAsProperties(false)
   .passCommandToAction(false)
   .option("-i --input <file>", "Input file")

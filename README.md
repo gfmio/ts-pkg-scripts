@@ -41,11 +41,11 @@ A good starting point for an open-source TypeScript package using `ts-pkg` as a 
     "compile:cjs": "ts-pkg compile --cjs -o dist/lib",
     "compile:es": "ts-pkg compile --es -e .mjs -o dist/lib",
     "compile:dts": "ts-pkg compile --dts -o dist/lib",
-    "package-json": "ts-pkg package-json --public",
+    "package-json": "ts-pkg create-package-json --public",
     "copy": "mkdir -p dist && cp LICENSE README.md dist",
     "clean:dist": "rimraf dist",
     "prebuild": "yarn clean:dist",
-    "publish": "cd dist && yarn publish"
+    "publish": "cd dist && yarn publish && yarn ts-pkg update-package-json -s dist/package.json -d package.json -f version"
   },
   "devDependencies": {
     "ts-pkg": "^0.1.0",
@@ -151,9 +151,9 @@ Options:
   -h, --help                        display help for command
 ```
 
-### ts-pkg package-json
+### ts-pkg create-package-json
 
-The `package-json` command will read a `package.json`, move it to a different location, update all internal file references, set or unset the private field and filter out fields using a whitelist.
+The `create-package-json` command will read a `package.json`, create a copy in a different location, update all internal file references, set or unset the private field and filter out fields using a whitelist.
 
 The input file can be specified with `-i` or `--input` and is by default `package.json` in the current directory.
 
@@ -166,9 +166,9 @@ The `--private`, `--public` and `--remove-private` fields will respectively set 
 The whitelisted fields are `author`, `bin`, `browser`, `bugs`, `bundledDependencies`, `bundleDependencies`, `contributors`, `cpu`, `dependencies`, `description`, `directories`, `dist`, `engines`, `engineStrict`, `files`, `homepage`, `keywords`, `license`, `main`, `maintainers`, `man`, `module`, `name`, `optionalDependencies`, `os`, `peerDependencies`, `private`, `publishConfig`, `readme`, `repository`, `resolutions`, `types`, `umd:main` and `version`.
 
 ```txt
-Usage: ts-pkg-scripts package-json [options]
+Usage: ts-pkg-scripts create-package-json [options]
 
-Move the package.json and update relative paths
+Creates a copy of a package.json and updates relative paths
 
 Options:
   -i --input <file>   Input file
@@ -180,9 +180,35 @@ Options:
   -h, --help          display help for command
 ```
 
+### ts-pkg update-package-json
+
+The `update-package-json` command updates an existing `package.json` by removing fields, setting fields with values from another file or from an override JSON string.
+
+The file that is being updated is set using `-d` or `--dest` and is by default set to `package.json` in the current directory.
+
+If any fields are specified to be removed with `-r`, `--remove` or `--remove-field`, they are removed from the destination file.
+
+If a source file is specified using `-s` or `--src`, any fields specified using `-f`, `--file` or `--files` that are present in the source file will be set in the destination file to the value in the source file.
+
+If an override string is present, it is parsed as JSON and any fields in it will be set in the destination file.
+
+```txt
+Usage: ts-pkg-scripts update-package-json [options]
+
+Removes or updates fields in a package.json from another package.json or overrides
+
+Options:
+  -d --dest <file>                    The destination file being updated
+  -f --fields --field <field>         The field(s) to update in dest from src (if present in src) (default: [])
+  -o --override <json>                The JSON string with properties to override in dest
+  -r --remove --remove-field <field>  The field(s) to remove from dest (if present) (default: [])
+  -s --src <file>                     The source file containing the fields used for the update
+  -h, --help                          display help for command
+```
+
 ## Library usage
 
-You can also use `ts-pkg-scripts` as a library. It exposes the utility functions `bundle`, `bundleDeclarations`, `compile`, `compileDeclarationsOnly`, `movePackageJson` and `updatePackageJson` as well as the `commander` objects and actions used to implement the CLI, if you want to extend the functionality.
+You can also use `ts-pkg-scripts` as a library. It exposes the utility functions `bundle`, `bundleDeclarations`, `compile`, `compileDeclarationsOnly`, `movePackageJson` and `createPackageJson` as well as the `commander` objects and actions used to implement the CLI, if you want to extend the functionality.
 
 ## License
 
