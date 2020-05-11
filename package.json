@@ -14,13 +14,13 @@
     "ts-pkg": "dist/bin/ts-pkg-scripts.js",
     "ts-pkg-scripts": "dist/bin/ts-pkg-scripts.js"
   },
-  "main": "dist/ts-pkg-scripts.js",
-  "module": "dist/ts-pkg-scripts.mjs",
-  "types": "dist/ts-pkg-scripts.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "run-p build:bundle:lib build:bundle:cli build:compile:cjs build:compile:es build:compile:dts build:readme build:license build:package-json",
-    "build:bundle:lib": "yarn ts-pkg bundle --cjs --es --dts --min",
-    "build:bundle:cli": "yarn ts-pkg bundle -e src/bin/ts-pkg-scripts.ts --cjs dist/bin/ts-pkg-scripts.js --min",
+    "build:bundle:lib": "yarn ts-pkg bundle --cjs --es --dts",
+    "build:bundle:cli": "yarn ts-pkg bundle -e src/bin/ts-pkg-scripts.ts --cjs dist/bin/ts-pkg-scripts.js",
     "build:compile:cjs": "yarn ts-pkg compile --cjs -o dist/lib",
     "build:compile:es": "yarn ts-pkg compile --es -e .mjs -o dist/lib",
     "build:compile:dts": "yarn ts-pkg compile --dts -o dist/lib",
@@ -55,7 +55,7 @@
     "rollup-plugin-terser": "^5.3.0",
     "rollup-plugin-typescript2": "^0.27.0",
     "ts-error": "^1.0.4",
-    "tslib": "^1.11.1"
+    "tslib": "^1.11.2"
   },
   "peerDependencies": {
     "typescript": "*"
