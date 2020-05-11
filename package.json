@@ -1,6 +1,6 @@
 {
   "name": "ts-pkg-scripts",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Build scripts for TypeScript packages",
   "license": "MIT",
   "repository": "https://github.com/gfmio/ts-pkg-scripts",
