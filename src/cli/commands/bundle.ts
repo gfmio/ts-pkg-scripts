@@ -4,7 +4,12 @@ import { existsAsync } from "../../utils/fs";
 import { bundleDeclarations, bundle } from "../../actions";
 import readPackageJson from "../../utils/readPackageJson";
 import readTsConfigJson from "../../utils/readTsconfigJson";
-import { OutputOptions } from "rollup";
+import {
+  OutputOptions,
+  RollupWarning,
+  WarningHandler,
+  RollupOptions,
+} from "rollup";
 import { preserveShebangs } from "rollup-plugin-preserve-shebangs";
 import typescript from "rollup-plugin-typescript2";
 import { terser } from "rollup-plugin-terser";
@@ -23,6 +28,20 @@ export interface BundleCommandOptions {
   umd?: boolean | string;
   umdName?: string;
 }
+
+const tsPlugin = (target: string) =>
+  typescript({
+    tsconfigOverride: {
+      compilerOptions: {
+        target,
+        module: "es2015",
+        declaration: false,
+        declarationMap: false,
+        noEmit: false,
+        emitDeclarationOnly: false,
+      },
+    },
+  });
 
 export const action = async (opts: BundleCommandOptions) => {
   const packageJson = await readPackageJson(opts.package);
@@ -86,9 +105,10 @@ export const action = async (opts: BundleCommandOptions) => {
   const iife = bundlePath(opts.iife, ".iife.js");
   const system = bundlePath(opts.system, ".system.js");
 
-  const rollupOutputs: OutputOptions[] = [];
+  const es5RollupOutputs: OutputOptions[] = [];
+  const es6RollupOutputs: OutputOptions[] = [];
   if (cjs) {
-    rollupOutputs.push({
+    es5RollupOutputs.push({
       file: cjs,
       format: "cjs",
       esModule: true,
@@ -96,7 +116,7 @@ export const action = async (opts: BundleCommandOptions) => {
     });
   }
   if (es) {
-    rollupOutputs.push({
+    es6RollupOutputs.push({
       file: es,
       format: "es",
       esModule: true,
@@ -104,7 +124,7 @@ export const action = async (opts: BundleCommandOptions) => {
     });
   }
   if (umd) {
-    rollupOutputs.push({
+    es5RollupOutputs.push({
       file: umd,
       format: "umd",
       name: umdName,
@@ -113,7 +133,7 @@ export const action = async (opts: BundleCommandOptions) => {
     });
   }
   if (amd) {
-    rollupOutputs.push({
+    es5RollupOutputs.push({
       file: amd,
       format: "amd",
       esModule: false,
@@ -121,7 +141,7 @@ export const action = async (opts: BundleCommandOptions) => {
     });
   }
   if (iife) {
-    rollupOutputs.push({
+    es5RollupOutputs.push({
       file: iife,
       format: "iife",
       esModule: false,
@@ -129,7 +149,7 @@ export const action = async (opts: BundleCommandOptions) => {
     });
   }
   if (system) {
-    rollupOutputs.push({
+    es5RollupOutputs.push({
       file: system,
       format: "system",
       esModule: false,
@@ -137,21 +157,7 @@ export const action = async (opts: BundleCommandOptions) => {
     });
   }
 
-  const plugins = [
-    typescript({
-      tsconfigOverride: {
-        compilerOptions: {
-          target: "es2015",
-          module: "esnext",
-          declaration: false,
-          declarationMap: false,
-          noEmit: false,
-          emitDeclarationOnly: false,
-        },
-      },
-    }),
-    preserveShebangs(),
-  ];
+  const plugins = [preserveShebangs()];
 
   if (opts.minify) {
     plugins.push(terser());
@@ -161,20 +167,37 @@ export const action = async (opts: BundleCommandOptions) => {
 
   const ignoredRollupWarnings = ["UNRESOLVED_IMPORT", "MISSING_GLOBAL_NAME"];
 
-  if (rollupOutputs.length > 0) {
-    promises.push(
-      bundle({
-        onwarn: (warning, defaultHandler) => {
-          if (ignoredRollupWarnings.includes(warning.code!)) {
-            return;
-          }
-          defaultHandler(warning);
-        },
-        input: entrypoint,
-        output: rollupOutputs,
-        plugins,
-      })
-    );
+  const onwarn = (warning: RollupWarning, defaultHandler: WarningHandler) => {
+    if (ignoredRollupWarnings.includes(warning.code!)) {
+      return;
+    }
+    defaultHandler(warning);
+  };
+
+  const baseConfig = {
+    onwarn,
+    input: entrypoint,
+    external: tsConfig.data.compilerOptions?.importHelpers ? ["tslib"] : [],
+  };
+
+  const configs: RollupOptions[] = [];
+  if (es5RollupOutputs.length > 0) {
+    configs.push({
+      ...baseConfig,
+      output: es5RollupOutputs,
+      plugins: [tsPlugin("es5"), ...plugins],
+    });
+  }
+  if (es6RollupOutputs.length > 0) {
+    configs.push({
+      ...baseConfig,
+      output: es6RollupOutputs,
+      plugins: [tsPlugin("es6"), ...plugins],
+    });
+  }
+
+  if (configs.length > 0) {
+    promises.push(bundle(...configs));
   }
 
   if (dts) {
