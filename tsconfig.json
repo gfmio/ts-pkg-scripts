@@ -12,7 +12,9 @@
     "moduleResolution": "node",
     "inlineSourceMap": true,
     "declarationMap": false,
-    "noEmit": true
+    "noEmit": true,
+    "importHelpers": true,
+    "noEmitHelpers": true
   },
   "include": ["src/**/*"]
 }

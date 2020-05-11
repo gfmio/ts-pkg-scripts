@@ -14,9 +14,9 @@
     "ts-pkg": "dist/bin/ts-pkg-scripts.js",
     "ts-pkg-scripts": "dist/bin/ts-pkg-scripts.js"
   },
-  "main": "dist/ts-pkg-scripts.js",
-  "module": "dist/ts-pkg-scripts.mjs",
-  "types": "dist/ts-pkg-scripts.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "run-p build:bundle:lib build:bundle:cli build:compile:cjs build:compile:es build:compile:dts build:readme build:license build:package-json",
     "build:bundle:lib": "yarn ts-pkg bundle --cjs --es --dts --min",
@@ -39,7 +39,7 @@
     "@types/gulp-if": "^0.0.33",
     "@types/gulp-rename": "^0.0.33",
     "@types/gulp-sourcemaps": "^0.0.32",
-    "@types/node": "^13.13.1",
+    "@types/node": "^13.13.5",
     "@types/prettier": "^2.0.0",
     "@types/vinyl": "^2.0.4",
     "commander": "^5.0.0",
@@ -50,12 +50,12 @@
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
     "jsonc-parser": "^2.2.1",
-    "rollup": "^2.6.1",
+    "rollup": "^2.9.1",
     "rollup-plugin-preserve-shebangs": "^0.2.0",
     "rollup-plugin-terser": "^5.3.0",
     "rollup-plugin-typescript2": "^0.27.0",
     "ts-error": "^1.0.4",
-    "tslib": "^1.11.1"
+    "tslib": "^1.11.2"
   },
   "peerDependencies": {
     "typescript": "*"
@@ -66,7 +66,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
-    "ts-node": "^8.9.0",
+    "ts-node": "^8.10.1",
     "typescript": "^3.8.3"
   }
 }
